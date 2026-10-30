@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Samsolar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="header">
+        <div class="logo">SAMSOLAR</div>
+
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="#" id="logoutBtn">Logout</a>
+        </nav>
+    </header>
+
+    <main class="dashboard">
+
+        <h1>Customer Dashboard</h1>
+        <p>Welcome, <span id="customerName">Loading...</span>!</p>
+
+        <div class="wallet-card">
+            <h3>Wallet Balance</h3>
+            <h2>₦<span id="walletBalance">Loading...</span></h2>
+            <a href="fund-wallet.html" class="button primary">
+                Fund Wallet
+            </a>
+        </div>
+
+        <h2>Our Services</h2>
+
+        <div class="services-grid">
+
+            <div class="service-card">
+                <div class="service-icon">📱</div>
+                <h3>Airtime</h3>
+                <a href="airtime.html" class="button primary">Buy Airtime</a>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">📶</div>
+                <h3>Data</h3>
+                <a href="data.html" class="button primary">Buy Data</a>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">💡</div>
+                <h3>Electricity</h3>
+                <a href="electricity.html" class="button primary">Pay Bill</a>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">📺</div>
+                <h3>Cable TV</h3>
+                <a href="cable.html" class="button primary">Pay TV</a>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon">📝</div>
+                <h3>Exam PIN</h3>
+                <a href="exam-pin.html" class="button primary">Buy PIN</a>
+            </div>
+
+        </div>
+
+        <section class="transactions">
+            <h2>Recent Transactions</h2>
+            <p>Transaction history will appear here.</p>
+        </section>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        const SUPABASE_URL =
+            "https://koedoblezjqxkeeaeivp.supabase.co";
+
+        const SUPABASE_KEY =
+            "sb_publishable_x338COon_8PNa_VFzQmXiQ_c5ZD-gtl";
+
+        const supabaseClient = window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+        async function loadDashboard() {
+
+            const { data: { user }, error } =
+                await supabaseClient.auth.getUser();
+
+            if (error || !user) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            // Load customer profile
+            const { data: profile, error: profileError } =
+                await supabaseClient
+                    .from("profiles")
+                    .select("full_name")
+                    .eq("id", user.id)
+                    .maybeSingle();
+
+            if (profileError) {
+                console.error(profileError);
+            }
+
+            const name =
+                profile?.full_name ||
+                user.user_metadata?.full_name ||
+                user.email;
+
+            document.getElementById("customerName").textContent = name;
+
+            // Load actual wallet balance
+            const { data: wallet, error: walletError } =
+                await supabaseClient
+                    .from("wallets")
+                    .select("balance")
+                    .eq("user_id", user.id)
+                    .maybeSingle();
+
+            if (walletError) {
+                console.error(walletError);
+                document.getElementById("walletBalance").textContent =
+                    "Unavailable";
+                return;
+            }
+
+            document.getElementById("walletBalance").textContent =
+                Number(wallet?.balance || 0).toFixed(2);
+        }
+
+        // Load dashboard
+        loadDashboard();
+
+        // Logout customer
+        document.getElementById("logoutBtn")
+            .addEventListener("click", async function(event) {
+
+                event.preventDefault();
+
+                const { error } =
+                    await supabaseClient.auth.signOut();
+
+                if (error) {
+                    alert(error.message);
+                    return;
+                }
+
+                window.location.href = "login.html";
+            });
+    </script>
+
+</body>
+</html>

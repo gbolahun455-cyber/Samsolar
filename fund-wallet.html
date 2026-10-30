@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fund Wallet | Samsolar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo">SAMSOLAR</div>
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+        </nav>
+    </header>
+
+    <section class="login-container">
+        <h1>Fund Your Wallet</h1>
+        <p>Make a deposit to your Samsolar wallet.</p>
+
+        <div class="wallet-card">
+            <h3>Bank Transfer Details</h3>
+            <p><strong>Bank:</strong> Smart Cash</p>
+            <p><strong>Account Number:</strong> 9044549206</p>
+            <p><strong>Account Name:</strong> Samuel Ademola Olatunde</p>
+        </div>
+
+        <form id="depositForm">
+            <label for="amount">Deposit Amount (₦)</label>
+            <input type="number" id="amount"
+                min="100" step="1"
+                placeholder="Enter amount" required>
+
+            <label for="reference">Transfer Reference</label>
+            <input type="text" id="reference"
+                placeholder="Enter transfer reference" required>
+
+            <button type="submit" id="submitButton">
+                Submit Deposit
+            </button>
+        </form>
+
+        <p id="message">Deposits are subject to admin approval.</p>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        const SUPABASE_URL = "https://koedoblezjqxkeeaeivp.supabase.co";
+
+        const SUPABASE_KEY = "sb_publishable_x338COon_8PNa_VFzQmXiQ_c5ZD-gtl";
+
+        const supabaseClient = window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+        const form = document.getElementById("depositForm");
+        const button = document.getElementById("submitButton");
+        const message = document.getElementById("message");
+
+        form.addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            button.disabled = true;
+            button.textContent = "Submitting...";
+
+            try {
+                const { data: userData, error: userError } =
+                    await supabaseClient.auth.getUser();
+
+                if (userError || !userData.user) {
+                    alert("Please log in before submitting a deposit.");
+                    window.location.href = "login.html";
+                    return;
+                }
+
+                const amount = Number(
+                    document.getElementById("amount").value
+                );
+
+                const reference = document.getElementById("reference")
+                    .value.trim();
+
+                if (!Number.isInteger(amount) || amount < 100) {
+                    message.textContent =
+                        "Please enter a valid amount of at least ₦100.";
+                    return;
+                }
+
+                if (!reference) {
+                    message.textContent =
+                        "Please enter your transfer reference.";
+                    return;
+                }
+
+                const { error } = await supabaseClient
+                    .from("deposits")
+                    .insert({
+                        user_id: userData.user.id,
+                        amount: amount,
+                        payment_reference: reference,
+                        status: "pending"
+                    });
+
+                if (error) {
+                    throw error;
+                }
+
+                message.textContent =
+                    "Deposit request submitted successfully. Awaiting admin approval.";
+
+                form.reset();
+
+            } catch (error) {
+                console.error(error);
+                message.textContent =
+                    "Submission failed: " + error.message;
+
+            } finally {
+                button.disabled = false;
+                button.textContent = "Submit Deposit";
+            }
+        });
+    </script>
+
+</body>
+</html>

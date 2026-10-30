@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy Data | Samsolar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo">SAMSOLAR</div>
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+        </nav>
+    </header>
+
+    <section class="login-container">
+        <h1>Buy Data</h1>
+        <p>Choose your network and data bundle.</p>
+
+        <form id="dataForm">
+            <label for="network">Select Network</label>
+            <select id="network" required>
+                <option value="">Choose network</option>
+                <option value="MTN">MTN</option>
+                <option value="Airtel">Airtel</option>
+                <option value="Glo">Glo</option>
+                <option value="9mobile">9mobile</option>
+            </select>
+
+            <label for="plan">Select Data Plan</label>
+            <select id="plan" required>
+                <option value="">Choose data plan</option>
+                <option value="500MB">500MB</option>
+                <option value="1GB">1GB</option>
+                <option value="2GB">2GB</option>
+                <option value="5GB">5GB</option>
+            </select>
+
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" placeholder="Enter phone number" required>
+
+            <button type="submit">Continue</button>
+        </form>
+    </section>
+
+    <script>
+        document.getElementById("dataForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            alert("Data page design is ready. We will connect it to the wallet and provider next.");
+        });
+    </script>
+
+</body>
+</html>

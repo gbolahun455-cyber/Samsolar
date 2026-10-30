@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam PIN | Samsolar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo">SAMSOLAR</div>
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+        </nav>
+    </header>
+
+    <section class="login-container">
+        <h1>Buy Exam PIN</h1>
+        <p>Choose your examination PIN.</p>
+
+        <form id="examForm">
+            <label for="exam">Examination Type</label>
+            <select id="exam" required>
+                <option value="">Choose examination</option>
+                <option value="WAEC">WAEC</option>
+                <option value="NECO">NECO</option>
+                <option value="JAMB">JAMB</option>
+                <option value="NABTEB">NABTEB</option>
+            </select>
+
+            <label for="quantity">Quantity</label>
+            <input type="number" id="quantity" min="1" value="1" required>
+
+            <button type="submit">Continue</button>
+        </form>
+    </section>
+
+    <script>
+        document.getElementById("examForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            alert("Exam PIN page design is ready. Payment and PIN delivery are not connected yet.");
+        });
+    </script>
+
+</body>
+</html>

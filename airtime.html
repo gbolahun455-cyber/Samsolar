@@ -1,0 +1,112 @@
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy Airtime | Samsolar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body><header class="header">
+    <div class="logo">SAMSOLAR</div>
+    <nav>
+        <a href="dashboard.html">Dashboard</a>
+    </nav>
+</header><section class="login-container">
+    <h1>Buy Airtime</h1>
+    <p>Test your airtime purchase form.</p><form id="airtimeForm">
+
+    <label for="network">Select Network</label>
+    <select id="network" required>
+        <option value="">Choose network</option>
+        <option value="MTN">MTN</option>
+        <option value="Airtel">Airtel</option>
+        <option value="Glo">Glo</option>
+        <option value="9mobile">9mobile</option>
+    </select>
+
+    <label for="phone">Phone Number</label>
+    <input
+        type="tel"
+        id="phone"
+        placeholder="Enter phone number"
+        required
+    >
+
+    <label for="amount">Amount (₦)</label>
+    <input
+        type="number"
+        id="amount"
+        min="50"
+        max="50000"
+        placeholder="Enter amount"
+        required
+    >
+
+    <button type="submit">Test Purchase</button>
+
+</form>
+
+<div id="message"></div>
+
+</section><script>
+const form = document.getElementById("airtimeForm");
+const message = document.getElementById("message");
+
+form.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const network = document.getElementById("network").value;
+    const phone = document.getElementById("phone").value.trim();
+    const amount = Number(document.getElementById("amount").value);
+
+    if (!network || !phone || !amount) {
+        message.textContent = "Please complete all fields.";
+        return;
+    }
+
+    if (!/^[0-9]{10,11}$/.test(phone)) {
+        message.textContent = "Enter a valid phone number.";
+        return;
+    }
+
+    if (amount < 50 || amount > 50000) {
+        message.textContent = "Amount must be between ₦50 and ₦50,000.";
+        return;
+    }
+
+    const reference = "TEST-" + Date.now();
+
+const transaction = {
+    reference: reference,
+    service: "Airtime",
+    network: network,
+    phone: phone,
+    amount: amount,
+    status: "Simulation Successful",
+    date: new Date().toLocaleString()
+};
+
+let history = JSON.parse(
+    localStorage.getItem("samsolar_test_history") || "[]"
+);
+
+history.unshift(transaction);
+
+localStorage.setItem(
+    "samsolar_test_history",
+    JSON.stringify(history)
+);
+
+message.innerHTML = `
+    <h3>Simulation Successful</h3>
+    <p>Network: ${network}</p>
+    <p>Phone: ${phone}</p>
+    <p>Amount: ₦${amount.toLocaleString()}</p>
+    <p>Reference: ${reference}</p>
+    <p>Saved to test history.</p>
+    <p>No real airtime was purchased.</p>
+`;
+
+form.reset();
+});
+</script></body>
+</html>

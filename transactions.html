@@ -1,0 +1,197 @@
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transactions | Samsolar</title>
+    <link rel="stylesheet" href="style.css"><style>
+    .history-container {
+        max-width: 850px;
+        margin: 35px auto;
+        padding: 20px;
+    }
+
+    .history-card {
+        background: white;
+        padding: 18px;
+        margin: 15px 0;
+        border-radius: 12px;
+        box-shadow: 0 3px 12px #00000010;
+        overflow-wrap: anywhere;
+    }
+
+    .status {
+        font-weight: bold;
+    }
+
+    .pending { color: #d18b00; }
+    .approved, .success { color: #159447; }
+    .rejected, .failed { color: #d93636; }
+
+    .section-title {
+        margin-top: 35px;
+    }
+
+    #message, #airtimeMessage {
+        margin: 15px 0;
+    }
+</style>
+
+</head><body><header class="header">
+    <div class="logo">SAMSOLAR</div>
+    <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="fund-wallet.html">Fund Wallet</a>
+        <a href="airtime.html">Buy Airtime</a>
+    </nav>
+</header><main class="history-container"><h1>Transaction History</h1>
+
+<h2 class="section-title">Wallet Deposits</h2>
+<p id="message">Loading deposit history...</p>
+<div id="historyList"></div>
+
+<h2 class="section-title">Airtime Transactions</h2>
+<p id="airtimeMessage">Loading airtime history...</p>
+<div id="airtimeList"></div>
+
+</main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
+const SUPABASE_URL = "https://koedoblezjqxkeeaeivp.supabase.co";
+const SUPABASE_KEY = "sb_publishable_x338COon_8PNa_VFzQmXiQ_c5ZD-gtl";
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+function createCard(container, title, details) {
+    const card = document.createElement("div");
+    card.className = "history-card";
+
+    const heading = document.createElement("h3");
+    heading.textContent = title;
+    card.appendChild(heading);
+
+    details.forEach(item => {
+        const p = document.createElement("p");
+        p.textContent = item.label + ": " + item.value;
+
+        if (item.status) {
+            p.className = "status " + item.status.toLowerCase();
+        }
+
+        card.appendChild(p);
+    });
+
+    container.appendChild(card);
+}
+
+async function loadHistory() {
+    const message = document.getElementById("message");
+    const historyList = document.getElementById("historyList");
+    const airtimeMessage = document.getElementById("airtimeMessage");
+    const airtimeList = document.getElementById("airtimeList");
+
+    const { data: userData, error: userError } =
+        await supabaseClient.auth.getUser();
+
+    if (userError || !userData.user) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    const userId = userData.user.id;
+
+    // Load deposit history
+    const { data: deposits, error: depositError } =
+        await supabaseClient
+            .from("deposits")
+            .select("amount, payment_reference, status, created_at")
+            .eq("user_id", userId)
+            .order("created_at", { ascending: false });
+
+    if (depositError) {
+        message.textContent = "Unable to load deposits.";
+    } else if (!deposits || deposits.length === 0) {
+        message.textContent = "No deposit records found.";
+    } else {
+        message.textContent =
+            deposits.length + " deposit record(s) found.";
+
+        deposits.forEach(deposit => {
+            createCard(historyList, "Wallet Deposit", [
+                {
+                    label: "Amount",
+                    value: "₦" + Number(deposit.amount).toLocaleString()
+                },
+                {
+                    label: "Reference",
+                    value: deposit.payment_reference
+                },
+                {
+                    label: "Status",
+                    value: deposit.status,
+                    status: deposit.status
+                },
+                {
+                    label: "Date",
+                    value: new Date(deposit.created_at).toLocaleString()
+                }
+            ]);
+        });
+    }
+
+    // Load airtime history
+    const { data: airtime, error: airtimeError } =
+        await supabaseClient
+            .from("transactions")
+            .select("service, amount, phone_number, network, reference, status, created_at")
+            .eq("user_id", userId)
+            .eq("service", "AIRTIME")
+            .order("created_at", { ascending: false });
+
+    if (airtimeError) {
+        airtimeMessage.textContent =
+            "Unable to load airtime history: " + airtimeError.message;
+    } else if (!airtime || airtime.length === 0) {
+        airtimeMessage.textContent =
+            "No airtime transactions found yet.";
+    } else {
+        airtimeMessage.textContent =
+            airtime.length + " airtime transaction(s) found.";
+
+        airtime.forEach(item => {
+            createCard(airtimeList, "Airtime Purchase", [
+                {
+                    label: "Network",
+                    value: item.network || "N/A"
+                },
+                {
+                    label: "Phone",
+                    value: item.phone_number || "N/A"
+                },
+                {
+                    label: "Amount",
+                    value: "₦" + Number(item.amount).toLocaleString()
+                },
+                {
+                    label: "Reference",
+                    value: item.reference || "N/A"
+                },
+                {
+                    label: "Status",
+                    value: item.status || "Pending",
+                    status: item.status || "pending"
+                },
+                {
+                    label: "Date",
+                    value: item.created_at
+                        ? new Date(item.created_at).toLocaleString()
+                        : "N/A"
+                }
+            ]);
+        });
+    }
+}
+
+loadHistory();
+</script></body>
+</html>

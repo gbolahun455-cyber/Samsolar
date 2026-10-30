@@ -1,0 +1,370 @@
+/* GENERAL */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f8f6;
+    color: #222;
+    line-height: 1.6;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* HEADER */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 7%;
+    background: #ffffff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: bold;
+    color: #087443;
+}
+
+nav {
+    display: flex;
+    gap: 25px;
+}
+
+nav a {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+nav a:hover {
+    color: #087443;
+}
+
+.header-button {
+    background: #087443;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+/* HERO */
+.hero {
+    min-height: 480px;
+    display: flex;
+    align-items: center;
+    padding: 70px 8%;
+    background: linear-gradient(135deg, #e2f5e9, #f7fff9);
+}
+
+.hero-content {
+    max-width: 650px;
+}
+
+.hero h1 {
+    font-size: 48px;
+    line-height: 1.2;
+    margin-bottom: 20px;
+}
+
+.hero h1 span {
+    color: #087443;
+}
+
+.hero p {
+    font-size: 17px;
+    color: #555;
+    margin-bottom: 25px;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+/* BUTTONS */
+.button {
+    display: inline-block;
+    padding: 13px 22px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+.primary {
+    background: #087443;
+    color: white;
+}
+
+.secondary {
+    border: 2px solid #087443;
+    color: #087443;
+}
+
+/* SERVICES */
+.services {
+    padding: 65px 7%;
+    text-align: center;
+}
+
+.services h2,
+.about h2,
+.cta h2 {
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.section-description {
+    color: #666;
+    margin-bottom: 35px;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 20px;
+}
+
+.service-card {
+    background: white;
+    padding: 25px 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+}
+
+.service-icon {
+    font-size: 35px;
+    margin-bottom: 12px;
+}
+
+.service-card h3 {
+    color: #087443;
+    margin-bottom: 8px;
+}
+
+.service-card p {
+    font-size: 14px;
+    color: #666;
+}
+
+/* ABOUT */
+.about {
+    padding: 60px 8%;
+    background: white;
+    text-align: center;
+}
+
+.about p {
+    max-width: 700px;
+    margin: 15px auto 0;
+    color: #555;
+}
+
+/* CALL TO ACTION */
+.cta {
+    padding: 60px 8%;
+    background: #e2f5e9;
+    text-align: center;
+}
+
+.cta p {
+    margin: 15px 0 25px;
+}
+
+/* FOOTER */
+.footer {
+    padding: 25px;
+    text-align: center;
+    background: #075e35;
+    color: white;
+    font-size: 14px;
+}
+
+/* MOBILE */
+@media (max-width: 700px) {
+
+    .header {
+        flex-wrap: wrap;
+        gap: 15px;
+        padding: 15px 5%;
+    }
+
+    nav {
+        width: 100%;
+        justify-content: center;
+        gap: 18px;
+        flex-wrap: wrap;
+    }
+
+    nav a {
+        font-size: 13px;
+    }
+
+    .header-button {
+        font-size: 13px;
+    }
+
+    .hero {
+        min-height: 400px;
+        padding: 50px 6%;
+    }
+
+    .hero h1 {
+        font-size: 36px;
+    }
+
+    .hero p {
+        font-size: 15px;
+    }
+
+    .services,
+    .about,
+    .cta {
+        padding: 45px 6%;
+    }
+
+    .services h2,
+    .about h2,
+    .cta h2 {
+        font-size: 25px;
+    }
+
+}
+/* Login and Register Pages */
+.login-container {
+    max-width: 420px;
+    margin: 60px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+}
+
+.login-container h1 {
+    text-align: center;
+    color: #087443;
+    margin-bottom: 10px;
+}
+
+.login-container > p {
+    text-align: center;
+    color: #666;
+    margin-bottom: 25px;
+}
+
+.login-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-container label {
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.login-container input {
+    padding: 13px;
+    margin-bottom: 18px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+.login-container button {
+    padding: 14px;
+    background: #087443;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.login-container button:hover {
+    background: #065c34;
+}
+
+.login-container a {
+    color: #087443;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+@media (max-width: 500px) {
+    .login-container {
+        margin: 30px 15px;
+        padding: 22px;
+    }
+}
+/* Customer Dashboard */
+.dashboard {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.dashboard h1 {
+    color: #087443;
+    margin-bottom: 10px;
+}
+
+.wallet-card {
+    background: linear-gradient(135deg, #087443, #10a060);
+    color: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin: 25px 0;
+}
+
+.wallet-card h3 {
+    margin-bottom: 10px;
+}
+
+.wallet-card h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+.wallet-card .button {
+    display: inline-block;
+    background: white;
+    color: #087443;
+}
+
+.dashboard .services-grid {
+    margin-top: 20px;
+}
+
+.dashboard .service-card {
+    text-align: center;
+}
+
+.dashboard .service-card .button {
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.transactions {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    margin-top: 30px;
+}
+
+@media (max-width: 600px) {
+    .dashboard {
+        margin: 20px auto;
+        padding: 15px;
+    }
+
+    .wallet-card h2 {
+        font-size: 26px;
+    }
+}

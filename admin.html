@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Samsolar Admin</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f7f6;
+    color: #222;
+}
+
+header {
+    background: #087f5b;
+    color: white;
+    padding: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+header button {
+    background: white;
+    color: #087f5b;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.container {
+    max-width: 800px;
+    margin: 25px auto;
+    padding: 15px;
+}
+
+h1 {
+    font-size: 24px;
+}
+
+.admin-card {
+    background: white;
+    padding: 18px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px #00000010;
+}
+
+.deposit-card h3 {
+    color: #087f5b;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.action-buttons button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+}
+
+.approve {
+    background: #087f5b;
+}
+
+.reject {
+    background: #d93025;
+}
+
+#message {
+    color: #444;
+    overflow-wrap: anywhere;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+    <h2>SAMSOLAR ADMIN</h2>
+    <button id="logoutButton">Logout</button>
+</header>
+
+<div class="container">
+
+    <h1>Admin Dashboard</h1>
+
+    <p>Manage customer deposit requests.</p>
+
+    <div class="admin-card">
+        <h2>Deposit Requests</h2>
+        <p id="message">Starting admin dashboard...</p>
+    </div>
+
+    <div id="depositList"></div>
+
+</div>
+
+<!-- Supabase library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+alert("Script started");
+// SUPABASE CONNECTION
+
+const SUPABASE_URL = "https://koedoblezjqxkeeaeivp.supabase.co";
+
+const SUPABASE_KEY = "sb_publishable_x338COon_8PNa_VFzQmXiQ_c5ZD-gtl";
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+// PAGE ELEMENTS
+
+const message = document.getElementById("message");
+
+const depositList = document.getElementById("depositList");
+
+
+// CHECK ADMIN ACCESS
+
+async function loadAdmin() {
+
+    message.textContent = "Checking admin access...";
+
+console.log("Admin check started");
+
+    try {
+
+        const { data: userData, error: userError } =
+            await supabaseClient.auth.getUser();
+
+        if (userError) {
+            message.textContent =
+                "Login check failed: " + userError.message;
+            return;
+        }
+
+        if (!userData.user) {
+
+            message.textContent =
+                "You are not logged in. Please log in first.";
+
+            return;
+        }
+
+        const user = userData.user;
+
+        message.textContent = "Checking admin profile...";
+
+        const { data: profile, error: profileError } =
+            await supabaseClient
+                .from("profiles")
+                .select("role")
+                .eq("id", user.id)
+                .maybeSingle();
+
+        if (profileError) {
+
+            message.textContent =
+                "Profile check failed: " + profileError.message;
+
+            return;
+if (!profile || profile.role !== "admin") {
+
+    message.textContent =
+        "Access denied. Profile: " +
+        JSON.stringify(profile) +
+        " | Role: " +
+        (profile ? profile.role : "No profile");
+
+    return;
+}
+
+        message.textContent = "Admin access confirmed.";
+
+        await loadDeposits();
+
+    } catch (error) {
+
+        message.textContent =
+            "Unexpected error: " + error.message;
+
+    }
+
+}
+
+
+// LOAD DEPOSIT REQUESTS
+
+async function loadDeposits() {
+
+    message.textContent = "Loading deposit requests...";
+
+    depositList.innerHTML = "";
+
+    try {
+
+        const { data: deposits, error } =
+            await supabaseClient
+                .from("deposits")
+                .select(
+                    "id, user_id, amount, payment_reference, status, created_at"
+                )
+                .order("created_at", { ascending: false });
+
+        if (error) {
+
+            message.textContent =
+                "Error loading deposits: " + error.message;
+
+            return;
+        }
+
+        if (!deposits || deposits.length === 0) {
+
+            message.textContent =
+                "No deposit requests found.";
+
+            return;
+        }
+
+
+        // GET CUSTOMER IDS
+
+        const userIds = [
+            ...new Set(deposits.map(item => item.user_id))
+        ];
+
+
+        // GET CUSTOMER PROFILES
+
+        const { data: profiles, error: profileError } =
+            await supabaseClient
+                .from("profiles")
+                .select("id, full_name")
+                .in("id", userIds);
+
+        if (profileError) {
+
+            message.textContent =
+                "Could not load customer details: " +
+                profileError.message;
+
+            return;
+        }
+
+
+        // CUSTOMER NAME LOOKUP
+
+        const names = {};
+
+        (profiles || []).forEach(profile => {
+
+            names[profile.id] =
+                profile.full_name || "Customer";
+
+        });
+
+
+        message.textContent =
+            deposits.length + " deposit request(s) found.";
+
+
+        // DISPLAY EACH DEPOSIT
+
+        deposits.forEach(deposit => {
+
+            const card = document.createElement("div");
+
+            card.className = "admin-card deposit-card";
+
+
+            const title = document.createElement("h3");
+
+            title.textContent =
+                names[deposit.user_id] || "Customer";
+
+
+            const amount = document.createElement("p");
+
+            amount.textContent =
+                "Amount: ₦" +
+                Number(deposit.amount).toLocaleString();
+
+
+            const reference = document.createElement("p");
+
+            reference.textContent =
+                "Reference: " +
+                (deposit.payment_reference || "Not provided");
+
+
+            const status = document.createElement("p");
+
+            status.textContent =
+                "Status: " + deposit.status;
+
+
+            const date = document.createElement("p");
+
+            date.textContent =
+                "Date: " +
+                new Date(deposit.created_at).toLocaleString();
+
+
+            card.append(
+                title,
+                amount,
+                reference,
+                status,
+                date
+            );
+
+
+            // APPROVE AND REJECT BUTTONS
+
+            if (deposit.status === "pending") {
+
+                const buttons = document.createElement("div");
+
+                buttons.className = "action-buttons";
+
+
+                const approveButton =
+                    document.createElement("button");
+
+                approveButton.className = "approve";
+
+                approveButton.textContent = "Approve";
+
+                approveButton.addEventListener("click", () => {
+
+                    processDeposit(
+                        deposit.id,
+                        "admin_approve_deposit"
+                    );
+
+                });
+
+
+                const rejectButton =
+                    document.createElement("button");
+
+                rejectButton.className = "reject";
+
+                rejectButton.textContent = "Reject";
+
+                rejectButton.addEventListener("click", () => {
+
+                    processDeposit(
+                        deposit.id,
+                        "admin_reject_deposit"
+                    );
+
+                });
+
+
+                buttons.append(
+                    approveButton,
+                    rejectButton
+                );
+
+                card.appendChild(buttons);
+
+            }
+
+
+            depositList.appendChild(card);
+
+        });
+
+    } catch (error) {
+
+        message.textContent =
+            "Unexpected deposit error: " + error.message;
+
+    }
+
+}
+
+
+// PROCESS DEPOSIT
+
+async function processDeposit(depositId, functionName) {
+
+    const action =
+        functionName === "admin_approve_deposit"
+            ? "approve this deposit"
+            : "reject this deposit";
+
+
+    if (!confirm("Are you sure you want to " + action + "?")) {
+        return;
+    }
+
+
+    message.textContent = "Processing deposit...";
+
+
+    try {
+
+        const { error } =
+            await supabaseClient.rpc(functionName, {
+                p_deposit_id: depositId
+            });
+
+
+        if (error) {
+
+            message.textContent =
+                "Action failed: " + error.message;
+
+            return;
+        }
+
+
+        message.textContent =
+            "Deposit processed successfully.";
+
+
+        await loadDeposits();
+
+    } catch (error) {
+
+        message.textContent =
+            "Unexpected error: " + error.message;
+
+    }
+
+}
+
+
+// LOGOUT
+
+document.getElementById("logoutButton")
+    .addEventListener("click", async function() {
+
+        await supabaseClient.auth.signOut();
+
+        window.location.href = "login.html";
+
+    });
+
+
+// START ADMIN DASHBOARD
+
+alert("JavaScript is working");
+loadAdmin();
+
+</script>
+
+</body>
+</html>

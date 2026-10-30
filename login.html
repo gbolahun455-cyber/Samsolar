@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Samsolar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo">SAMSOLAR</div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="register.html">Register</a>
+        </nav>
+    </header>
+
+    <section class="login-container">
+        <h1>Welcome Back</h1>
+        <p>Login to your Samsolar account</p>
+
+        <form id="loginForm">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="Enter your email" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter your password" required>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <p>Don't have an account? <a href="register.html">Create Account</a></p>
+    </section>
+<!-- Supabase Library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+    const SUPABASE_URL = "https://koedoblezjqxkeeaeivp.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_x338COon_8PNa_VFzQmXiQ_c5ZD-gtl";
+
+    const supabaseClient = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+    const loginForm = document.getElementById("loginForm");
+
+    loginForm.addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+
+        if (error) {
+            alert(error.message);
+            return;
+        }
+
+        alert("Login successful!");
+        window.location.href = "dashboard.html";
+    });
+</script>
+</body>
+</html>

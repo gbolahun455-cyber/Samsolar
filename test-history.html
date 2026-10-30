@@ -1,0 +1,50 @@
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test History | Samsolar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body><header class="header">
+    <div class="logo">SAMSOLAR</div>
+    <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="airtime.html">Buy Airtime</a>
+    </nav>
+</header><section class="login-container">
+    <h1>Test Transaction History</h1>
+    <p>These are simulated transactions only.</p><div id="history"></div>
+
+<button onclick="clearHistory()">Clear Test History</button>
+
+</section><script>
+const historyBox = document.getElementById("history");
+
+const transactions = JSON.parse(
+    localStorage.getItem("samsolar_test_history") || "[]"
+);
+
+if (transactions.length === 0) {
+    historyBox.innerHTML = "<p>No test transactions yet.</p>";
+} else {
+    historyBox.innerHTML = transactions.map(item => `
+        <div class="card">
+            <h3>${item.service} - ${item.network}</h3>
+            <p>Phone: ${item.phone}</p>
+            <p>Amount: ₦${Number(item.amount).toLocaleString()}</p>
+            <p>Reference: ${item.reference}</p>
+            <p>Status: ${item.status}</p>
+            <p>Date: ${item.date}</p>
+        </div>
+        <hr>
+    `).join("");
+}
+
+function clearHistory() {
+    if (confirm("Clear all simulated transactions?")) {
+        localStorage.removeItem("samsolar_test_history");
+        location.reload();
+    }
+}
+</script></body>
+</html>

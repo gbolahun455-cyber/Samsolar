@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electricity Payment | Samsolar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo">SAMSOLAR</div>
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+        </nav>
+    </header>
+
+    <section class="login-container">
+        <h1>Electricity Payment</h1>
+        <p>Pay your electricity bill with Samsolar.</p>
+
+        <form id="electricityForm">
+            <label for="disco">Select Electricity Provider</label>
+            <select id="disco" required>
+                <option value="">Choose provider</option>
+                <option value="IKEDC">IKEDC</option>
+                <option value="EKEDC">EKEDC</option>
+                <option value="AEDC">AEDC</option>
+                <option value="IBEDC">IBEDC</option>
+                <option value="BEDC">BEDC</option>
+                <option value="PHED">PHED</option>
+                <option value="KEDCO">KEDCO</option>
+                <option value="JED">JED</option>
+            </select>
+
+            <label for="meterType">Meter Type</label>
+            <select id="meterType" required>
+                <option value="">Choose meter type</option>
+                <option value="Prepaid">Prepaid</option>
+                <option value="Postpaid">Postpaid</option>
+            </select>
+
+            <label for="meterNumber">Meter Number</label>
+            <input type="text" id="meterNumber" placeholder="Enter meter number" required>
+
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" placeholder="Enter phone number" required>
+
+            <label for="amount">Amount (₦)</label>
+            <input type="number" id="amount" min="100" placeholder="Enter amount" required>
+
+            <button type="submit">Continue</button>
+        </form>
+    </section>
+
+    <script>
+        document.getElementById("electricityForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            alert("Electricity page design is ready. Payment is not connected yet.");
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | Samsolar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo">SAMSOLAR</div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="login.html">Login</a>
+        </nav>
+    </header>
+
+    <section class="login-container">
+        <h1>Create Account</h1>
+        <p>Register to start using Samsolar</p>
+
+        <form id="registerForm">
+            <label for="fullname">Full Name</label>
+            <input type="text" id="fullname" placeholder="Enter your full name" required>
+
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" placeholder="Enter your phone number" required>
+
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="Enter your email" required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Create a password" required>
+
+            <button type="submit">Create Account</button>
+        </form>
+
+        <p>Already have an account? <a href="login.html">Login</a></p>
+    </section>
+
+</body>
+</html>
+<!-- Supabase Library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+    const SUPABASE_URL = "https://koedoblezjqxkeeaeivp.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_x338COon_8PNa_VFzQmXiQ_c5ZD-gtl";
+
+    const supabaseClient = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+</script>
+<script>
+    const registerForm = document.getElementById("registerForm");
+
+    registerForm.addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        const fullname = document.getElementById("fullname").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+
+        const { data, error } = await supabaseClient.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+                data: {
+                    full_name: fullname,
+                    phone: phone
+                }
+            }
+        });
+
+        if (error) {
+            alert(error.message);
+            return;
+        }
+
+        alert("Registration successful! Please check your email if verification is required.");
+        window.location.href = "login.html";
+    });
+</script>

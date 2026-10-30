@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cable TV | Samsolar</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo">SAMSOLAR</div>
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+        </nav>
+    </header>
+
+    <section class="login-container">
+        <h1>Cable TV Subscription</h1>
+        <p>Renew your cable TV subscription.</p>
+
+        <form id="cableForm">
+            <label for="provider">Select Provider</label>
+            <select id="provider" required>
+                <option value="">Choose provider</option>
+                <option value="DSTV">DStv</option>
+                <option value="GOTV">GOtv</option>
+                <option value="Startimes">StarTimes</option>
+            </select>
+
+            <label for="smartcard">Smartcard / IUC Number</label>
+            <input type="text" id="smartcard" placeholder="Enter smartcard or IUC number" required>
+
+            <label for="plan">Select Package</label>
+            <select id="plan" required>
+                <option value="">Choose package</option>
+                <option value="Basic">Basic</option>
+                <option value="Standard">Standard</option>
+                <option value="Premium">Premium</option>
+            </select>
+
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" placeholder="Enter phone number" required>
+
+            <button type="submit">Continue</button>
+        </form>
+    </section>
+
+    <script>
+        document.getElementById("cableForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            alert("Cable TV page design is ready. Payment is not connected yet.");
+        });
+    </script>
+
+</body>
+</html>
